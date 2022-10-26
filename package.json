@@ -57,9 +57,9 @@
   },
   "homepage": "https://embiem.github.io/react-canvas-draw/",
   "license": "MIT",
-  "repository": "https://github.com/embiem/react-canvas-draw",
+  "repository": "https://github.com/AarafH/react-canvas-draw",
   "bugs": {
-    "url": "https://github.com/embiem/react-canvas-draw/issues"
+    "url": "https://github.com/AarafH/react-canvas-draw/issues"
   },
   "keywords": [
     "react-component",
