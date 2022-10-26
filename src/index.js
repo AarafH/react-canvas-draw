@@ -71,7 +71,7 @@ export default class CanvasDraw extends PureComponent {
     brushRadius: 10,
     brushColor: "#444",
     catenaryColor: "#0a0302",
-    gridColor: "rgba(150,150,150,0.17)",
+    gridColor: "rgba(255,0,0,0.8)",
     backgroundColor: "#FFF",
     hideGrid: false,
     canvasWidth: 400,
