@@ -121,7 +121,7 @@ export default class CanvasDraw extends PureComponent {
   }
 
   undo = () => {
-    let lines = [];
+    /*let lines = [];
     if (this.lines.length) {
       lines = this.lines.slice(0, -1);
     } else if (this.erasedLines.length) {
@@ -130,6 +130,7 @@ export default class CanvasDraw extends PureComponent {
     this.clearExceptErasedLines();
     this.simulateDrawingLines({ lines, immediate: true });
     this.triggerOnChange();
+    */
   };
 
   eraseAll = () => {
