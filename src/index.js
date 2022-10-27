@@ -43,21 +43,17 @@ export default class CanvasDraw extends PureComponent {
     brushRadius: PropTypes.number,
     brushColor: PropTypes.string,
     catenaryColor: PropTypes.string,
-    gridColor: PropTypes.string,
     backgroundColor: PropTypes.string,
-    hideGrid: PropTypes.bool,
-    canvasWidth: dimensionsPropTypes,
-    canvasHeight: dimensionsPropTypes,
+    scale: PropTypes.number,
+    lowestX: PropTypes.number,
+    highestX: PropTypes.number,
+    lowestY: PropTypes.number,
+    highestY: PropTypes.number,
     disabled: PropTypes.bool,
     imgSrc: PropTypes.string,
     saveData: PropTypes.string,
     immediateLoading: PropTypes.bool,
     hideInterface: PropTypes.bool,
-    gridSizeX: PropTypes.number,
-    gridSizeY: PropTypes.number,
-    gridLineWidth: PropTypes.number,
-    hideGridX: PropTypes.bool,
-    hideGridY: PropTypes.bool,
     enablePanAndZoom: PropTypes.bool,
     mouseZoomFactor: PropTypes.number,
     zoomExtents: boundsProp,
@@ -71,21 +67,19 @@ export default class CanvasDraw extends PureComponent {
     brushRadius: 10,
     brushColor: "#444",
     catenaryColor: "#0a0302",
-    gridColor: "rgba(150,150,150,0.5)",
     backgroundColor: "#FFF",
-    hideGrid: false,
-    canvasWidth: 700,
-    canvasHeight: 700,
+    scale: 1,
+    lowestX: -6,
+    highestX: 6,
+    lowestY: -6,
+    highestY: 6,
     disabled: false,
     imgSrc: "",
     saveData: "",
     immediateLoading: false,
     hideInterface: false,
-    gridSizeX: 50,
-    gridSizeY: 50,
+    gridSize: 50,
     gridLineWidth: 0.5,
-    hideGridX: false,
-    hideGridY: false,
     enablePanAndZoom: false,
     mouseZoomFactor: 0.01,
     zoomExtents: { min: 0.33, max: 3 },
@@ -112,10 +106,13 @@ export default class CanvasDraw extends PureComponent {
     this.isPressing = false;
     this.deferRedrawOnViewChange = false;
 
+    this.canvasWidth = (props.highestX - props.lowestX + 2) * (props.gridSize);
+    this.canvasHeight = (props.highestY - props.lowestY + 2) * (props.gridSize);
+
     this.interactionSM = new DefaultState();
     this.coordSystem = new CoordinateSystem({
       scaleExtents: props.zoomExtents,
-      documentSize: { width: props.canvasWidth, height: props.canvasHeight },
+      documentSize: { width: this.canvasWidth, height: this.canvasHeight },
     });
     this.coordSystem.attachViewChangeListener(this.applyView.bind(this));
   }
@@ -156,8 +153,8 @@ export default class CanvasDraw extends PureComponent {
     // Construct and return the stringified saveData object
     return JSON.stringify({
       lines: this.lines,
-      width: this.props.canvasWidth,
-      height: this.props.canvasHeight,
+      width: this.canvasWidth,
+      height: this.canvasHeight,
     });
   };
 
@@ -238,8 +235,8 @@ export default class CanvasDraw extends PureComponent {
     this.clear();
 
     if (
-      width === this.props.canvasWidth &&
-      height === this.props.canvasHeight
+      width === this.canvasWidth &&
+      height === this.canvasHeight
     ) {
       this.simulateDrawingLines({
         lines,
@@ -247,8 +244,8 @@ export default class CanvasDraw extends PureComponent {
       });
     } else {
       // we need to rescale the lines based on saved & current dimensions
-      const scaleX = this.props.canvasWidth / width;
-      const scaleY = this.props.canvasHeight / height;
+      const scaleX = this.canvasWidth / width;
+      const scaleY = this.canvasHeight / height;
       const scaleAvg = (scaleX + scaleY) / 2;
 
       this.simulateDrawingLines({
@@ -360,8 +357,8 @@ export default class CanvasDraw extends PureComponent {
           display: "block",
           background: this.props.backgroundColor,
           touchAction: "none",
-          width: this.props.canvasWidth,
-          height: this.props.canvasHeight,
+          width: this.canvasWidth,
+          height: this.canvasHeight,
           ...this.props.style,
         }}
         ref={(container) => {
@@ -472,8 +469,8 @@ export default class CanvasDraw extends PureComponent {
   clampPointToDocument = (point) => {
     if (this.props.clampLinesToDocument) {
       return {
-        x: Math.max(Math.min(point.x, this.props.canvasWidth), 0),
-        y: Math.max(Math.min(point.y, this.props.canvasHeight), 0),
+        x: Math.max(Math.min(point.x, this.canvasWidth), 0),
+        y: Math.max(Math.min(point.y, this.canvasHeight), 0),
       };
     } else {
       return point;
@@ -668,11 +665,11 @@ export default class CanvasDraw extends PureComponent {
   };
 
   drawGrid = (ctx) => {
-    if (this.props.hideGrid) return;
 
     this.clearWindow(ctx);
 
-    const gridSize = 50;
+    const gridSize = this.props.gridSize;
+
     const { viewMin, viewMax } = this.coordSystem.canvasBounds;
     const minx = Math.floor(viewMin.x / gridSize - 1) * gridSize;
     const miny = Math.floor(viewMin.y / gridSize - 1) * gridSize;
@@ -682,46 +679,42 @@ export default class CanvasDraw extends PureComponent {
     ctx.beginPath();
     ctx.setLineDash([5, 1]);
     ctx.setLineDash([]);
-    ctx.strokeStyle = this.props.gridColor;
+    const gridColor = "rgba(150,150,150,0.5)";
+    ctx.strokeStyle = gridColor;
     ctx.lineWidth = this.props.gridLineWidth;
-    const mid = this.props.canvasWidth / (2 * gridSize);
+    
+    // Have 1 more square on either side for both x and y coordinates
+    let midCount = this.props.lowestX - 1;
 
-    if (!this.props.hideGridX) {
-      let midCount = 0;
-      let countX = minx;
-      const gridSizeX = this.props.gridSizeX;
-      while (countX < maxx) {
-        ctx.beginPath();
-        if (midCount === mid) {
-          ctx.strokeStyle = "rgba(0,0,0,1)";
-        }
-        countX += gridSizeX;
-        ctx.moveTo(countX, miny);
-        ctx.lineTo(countX, maxy);
-        ctx.stroke();
-        ctx.closePath();
-        ctx.strokeStyle = this.props.gridColor;
-        midCount++;
+    let countX = minx;
+    while (countX < maxx) {
+      ctx.beginPath();
+      if (midCount === 0) {
+        ctx.strokeStyle = "rgba(0,0,0,1)";
       }
+      countX += gridSize;
+      ctx.moveTo(countX, miny);
+      ctx.lineTo(countX, maxy);
+      ctx.stroke();
+      ctx.closePath();
+      ctx.strokeStyle = gridColor;
+      midCount++;
     }
 
-    if (!this.props.hideGridY) {
-      let midCount = 0;
-      let countY = miny;
-      const gridSizeY = this.props.gridSizeY;
-      while (countY < maxy) {
-        ctx.beginPath();
-        if (midCount === mid) {
-          ctx.strokeStyle = "rgba(0,0,0,1)";
-        }
-        countY += gridSizeY;
-        ctx.moveTo(minx, countY);
-        ctx.lineTo(maxx, countY);
-        ctx.stroke();
-        ctx.closePath();
-        ctx.strokeStyle = this.props.gridColor;
-        midCount++;
+    midCount = this.props.lowestY - 1;
+    let countY = miny;
+    while (countY < maxy) {
+      ctx.beginPath();
+      if (midCount === 0) {
+        ctx.strokeStyle = "rgba(0,0,0,1)";
       }
+      countY += gridSize;
+      ctx.moveTo(minx, countY);
+      ctx.lineTo(maxx, countY);
+      ctx.stroke();
+      ctx.closePath();
+      ctx.strokeStyle = gridColor;
+      midCount++;
     }
   };
 
