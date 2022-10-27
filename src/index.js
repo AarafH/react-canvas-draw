@@ -106,8 +106,8 @@ export default class CanvasDraw extends PureComponent {
     this.isPressing = false;
     this.deferRedrawOnViewChange = false;
 
-    this.canvasWidth = (props.highestX - props.lowestX + 2) * (props.gridSize);
-    this.canvasHeight = (props.highestY - props.lowestY + 2) * (props.gridSize);
+    this.canvasWidth = ((props.highestX - props.lowestX + 2*props.scale)/props.scale) * (props.gridSize);
+    this.canvasHeight = ((props.highestY - props.lowestY + 2*props.scale)/props.scale) * (props.gridSize);
 
     this.interactionSM = new DefaultState();
     this.coordSystem = new CoordinateSystem({
@@ -704,7 +704,7 @@ export default class CanvasDraw extends PureComponent {
       ctx.stroke();
       ctx.closePath();
       ctx.strokeStyle = gridColor;
-      midCount++;
+      midCount += this.props.scale;
     }
 
     midCount = highestYBound;
@@ -720,7 +720,7 @@ export default class CanvasDraw extends PureComponent {
       ctx.stroke();
       ctx.closePath();
       ctx.strokeStyle = gridColor;
-      midCount--;
+      midCount -= this.props.scale;
     }
 
     const yAxis = (-lowestXBound / this.props.scale) * gridSize; 
@@ -731,7 +731,7 @@ export default class CanvasDraw extends PureComponent {
       ctx.font = "20px Arial";
       ctx.fillText("Y",yAxis+5,20);
 
-      let yLabel = highestYBound - 1;
+      let yLabel = highestYBound - this.props.scale;
       for (let i = 1; i < ((highestYBound - lowestYBound)/this.props.scale); i++) {
         if (yLabel === 0) {
           yLabel -= this.props.scale;
@@ -747,7 +747,7 @@ export default class CanvasDraw extends PureComponent {
       ctx.font = "20px Arial";
       ctx.fillText("X", ((highestXBound - lowestXBound)/this.props.scale) * gridSize-20,xAxis-5);
 
-      let xLabel = lowestXBound + 1;
+      let xLabel = lowestXBound + this.props.scale;
       for (let i = 1; i < ((highestXBound - lowestXBound)/this.props.scale); i++) {
         if (xLabel === 0) {
           xLabel += this.props.scale;
