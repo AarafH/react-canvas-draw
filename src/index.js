@@ -737,8 +737,9 @@ export default class CanvasDraw extends PureComponent {
           yLabel -= this.props.scale;
           continue;
         }
-        ctx.fillText(yLabel.toString(), yAxis-25, (gridSize*i)+6)
-        yLabel -= this.props.scale;
+        let label = yLabel.toString();
+        ctx.fillText(label, yAxis-15-(5*(label.length)), (gridSize*i)+6)
+        yLabel -= this.props.scale
       }
     }
 
@@ -753,7 +754,8 @@ export default class CanvasDraw extends PureComponent {
           xLabel += this.props.scale;
           continue;
         }
-        ctx.fillText(xLabel.toString(), (gridSize*i)-6, xAxis+20)
+        let label = xLabel.toString()
+        ctx.fillText(label, (gridSize*i)-3-(3*label.length), xAxis+20)
         xLabel += this.props.scale;
       }
     }
