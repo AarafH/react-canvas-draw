@@ -71,18 +71,18 @@ export default class CanvasDraw extends PureComponent {
     brushRadius: 10,
     brushColor: "#444",
     catenaryColor: "#0a0302",
-    gridColor: "rgba(255,0,0,0.8)",
+    gridColor: "rgba(150,150,150,0.5)",
     backgroundColor: "#FFF",
     hideGrid: false,
-    canvasWidth: 400,
-    canvasHeight: 400,
+    canvasWidth: 700,
+    canvasHeight: 700,
     disabled: false,
     imgSrc: "",
     saveData: "",
     immediateLoading: false,
     hideInterface: false,
-    gridSizeX: 25,
-    gridSizeY: 25,
+    gridSizeX: 50,
+    gridSizeY: 50,
     gridLineWidth: 0.5,
     hideGridX: false,
     hideGridY: false,
@@ -672,7 +672,7 @@ export default class CanvasDraw extends PureComponent {
 
     this.clearWindow(ctx);
 
-    const gridSize = 25;
+    const gridSize = 50;
     const { viewMin, viewMax } = this.coordSystem.canvasBounds;
     const minx = Math.floor(viewMin.x / gridSize - 1) * gridSize;
     const miny = Math.floor(viewMin.y / gridSize - 1) * gridSize;
@@ -684,27 +684,44 @@ export default class CanvasDraw extends PureComponent {
     ctx.setLineDash([]);
     ctx.strokeStyle = this.props.gridColor;
     ctx.lineWidth = this.props.gridLineWidth;
+    const mid = this.props.canvasWidth / (2 * gridSize);
 
     if (!this.props.hideGridX) {
+      let midCount = 0;
       let countX = minx;
       const gridSizeX = this.props.gridSizeX;
       while (countX < maxx) {
+        ctx.beginPath();
+        if (midCount === mid) {
+          ctx.strokeStyle = "rgba(0,0,0,1)";
+        }
         countX += gridSizeX;
         ctx.moveTo(countX, miny);
         ctx.lineTo(countX, maxy);
+        ctx.stroke();
+        ctx.closePath();
+        ctx.strokeStyle = this.props.gridColor;
+        midCount++;
       }
-      ctx.stroke();
     }
 
     if (!this.props.hideGridY) {
+      let midCount = 0;
       let countY = miny;
       const gridSizeY = this.props.gridSizeY;
       while (countY < maxy) {
+        ctx.beginPath();
+        if (midCount === mid) {
+          ctx.strokeStyle = "rgba(0,0,0,1)";
+        }
         countY += gridSizeY;
         ctx.moveTo(minx, countY);
         ctx.lineTo(maxx, countY);
+        ctx.stroke();
+        ctx.closePath();
+        ctx.strokeStyle = this.props.gridColor;
+        midCount++;
       }
-      ctx.stroke();
     }
   };
 
