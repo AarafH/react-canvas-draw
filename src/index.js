@@ -684,7 +684,13 @@ export default class CanvasDraw extends PureComponent {
     ctx.lineWidth = this.props.gridLineWidth;
     
     // Have 1 more square on either side for both x and y coordinates
-    let midCount = this.props.lowestX - 1;
+    // Assumes bounds are divisible by scale
+    const lowestXBound = this.props.lowestX - this.props.scale;
+    const highestXBound = this.props.highestX + this.props.scale;
+    const lowestYBound = this.props.lowestY - this.props.scale;
+    const highestYBound = this.props.highestY + this.props.scale;
+
+    let midCount = lowestXBound;
 
     let countX = minx;
     while (countX < maxx) {
@@ -701,7 +707,7 @@ export default class CanvasDraw extends PureComponent {
       midCount++;
     }
 
-    midCount = this.props.lowestY - 1;
+    midCount = highestYBound;
     let countY = miny;
     while (countY < maxy) {
       ctx.beginPath();
@@ -714,8 +720,44 @@ export default class CanvasDraw extends PureComponent {
       ctx.stroke();
       ctx.closePath();
       ctx.strokeStyle = gridColor;
-      midCount++;
+      midCount--;
     }
+
+    const yAxis = (-lowestXBound / this.props.scale) * gridSize; 
+    const xAxis = (highestYBound / this.props.scale) * gridSize; 
+
+    // Labels y axis
+    if ((lowestXBound < 0) && (highestXBound > 0)) {
+      ctx.font = "20px Arial";
+      ctx.fillText("Y",yAxis+5,20);
+
+      let yLabel = highestYBound - 1;
+      for (let i = 1; i < ((highestYBound - lowestYBound)/this.props.scale); i++) {
+        if (yLabel === 0) {
+          yLabel -= this.props.scale;
+          continue;
+        }
+        ctx.fillText(yLabel.toString(), yAxis-25, (gridSize*i)+6)
+        yLabel -= this.props.scale;
+      }
+    }
+
+    // Labels x axis
+    if ((lowestYBound < 0) && (highestYBound > 0)) {
+      ctx.font = "20px Arial";
+      ctx.fillText("X", ((highestXBound - lowestXBound)/this.props.scale) * gridSize-20,xAxis-5);
+
+      let xLabel = lowestXBound + 1;
+      for (let i = 1; i < ((highestXBound - lowestXBound)/this.props.scale); i++) {
+        if (xLabel === 0) {
+          xLabel += this.props.scale;
+          continue;
+        }
+        ctx.fillText(xLabel.toString(), (gridSize*i)-6, xAxis+20)
+        xLabel += this.props.scale;
+      }
+    }
+
   };
 
   drawInterface = (ctx, pointer, brush) => {
