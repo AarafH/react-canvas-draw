@@ -44,7 +44,8 @@ export default class CanvasDraw extends PureComponent {
     brushColor: PropTypes.string,
     catenaryColor: PropTypes.string,
     backgroundColor: PropTypes.string,
-    scale: PropTypes.number,
+    xScale: PropTypes.number,
+    yScale: PropTypes.number,
     lowestX: PropTypes.number,
     highestX: PropTypes.number,
     lowestY: PropTypes.number,
@@ -68,11 +69,12 @@ export default class CanvasDraw extends PureComponent {
     brushColor: "#444",
     catenaryColor: "#0a0302",
     backgroundColor: "#FFF",
-    scale: 1,
-    lowestX: -6,
-    highestX: 6,
-    lowestY: -6,
-    highestY: 6,
+    xScale: 1,
+    yScale: 2.5,
+    lowestX: -20,
+    highestX: 10,
+    lowestY: -10,
+    highestY: 10,
     disabled: false,
     imgSrc: "",
     saveData: "",
@@ -106,8 +108,8 @@ export default class CanvasDraw extends PureComponent {
     this.isPressing = false;
     this.deferRedrawOnViewChange = false;
 
-    this.canvasWidth = ((props.highestX - props.lowestX + 2*props.scale)/props.scale) * (props.gridSize);
-    this.canvasHeight = ((props.highestY - props.lowestY + 2*props.scale)/props.scale) * (props.gridSize);
+    this.canvasWidth = ((props.highestX - props.lowestX + 2*props.xScale)/props.xScale) * (props.gridSize);
+    this.canvasHeight = ((props.highestY - props.lowestY + 2*props.yScale)/props.yScale) * (props.gridSize);
 
     this.interactionSM = new DefaultState();
     this.coordSystem = new CoordinateSystem({
@@ -685,10 +687,10 @@ export default class CanvasDraw extends PureComponent {
     
     // Have 1 more square on either side for both x and y coordinates
     // Assumes bounds are divisible by scale
-    const lowestXBound = this.props.lowestX - this.props.scale;
-    const highestXBound = this.props.highestX + this.props.scale;
-    const lowestYBound = this.props.lowestY - this.props.scale;
-    const highestYBound = this.props.highestY + this.props.scale;
+    const lowestXBound = this.props.lowestX - this.props.xScale;
+    const highestXBound = this.props.highestX + this.props.xScale;
+    const lowestYBound = this.props.lowestY - this.props.yScale;
+    const highestYBound = this.props.highestY + this.props.yScale;
 
     let midCount = lowestXBound;
 
@@ -704,7 +706,7 @@ export default class CanvasDraw extends PureComponent {
       ctx.stroke();
       ctx.closePath();
       ctx.strokeStyle = gridColor;
-      midCount += this.props.scale;
+      midCount += this.props.xScale;
     }
 
     midCount = highestYBound;
@@ -720,43 +722,45 @@ export default class CanvasDraw extends PureComponent {
       ctx.stroke();
       ctx.closePath();
       ctx.strokeStyle = gridColor;
-      midCount -= this.props.scale;
+      midCount -= this.props.yScale;
     }
 
-    const yAxis = (-lowestXBound / this.props.scale) * gridSize; 
-    const xAxis = (highestYBound / this.props.scale) * gridSize; 
+    const yAxis = (-lowestXBound / this.props.xScale) * gridSize; 
+    const xAxis = (highestYBound / this.props.yScale) * gridSize; 
 
     // Labels y axis
     if ((lowestXBound < 0) && (highestXBound > 0)) {
       ctx.font = "20px Arial";
       ctx.fillText("Y",yAxis+5,20);
 
-      let yLabel = highestYBound - this.props.scale;
-      for (let i = 1; i < ((highestYBound - lowestYBound)/this.props.scale); i++) {
+      let yLabel = highestYBound - this.props.yScale;
+      for (let i = 1; i < ((highestYBound - lowestYBound)/this.props.yScale); i++) {
         if (yLabel === 0) {
-          yLabel -= this.props.scale;
+          yLabel -= this.props.yScale;
           continue;
         }
         let label = yLabel.toString();
-        ctx.fillText(label, yAxis-15-(5*(label.length)), (gridSize*i)+6)
-        yLabel -= this.props.scale
+        let labely = label.length <=3 ? yAxis-15-(7*(label.length)) : yAxis-15-(7*(label.length))
+        ctx.fillText(label, labely, (gridSize*i)+6)
+        yLabel -= this.props.yScale
       }
     }
 
     // Labels x axis
     if ((lowestYBound < 0) && (highestYBound > 0)) {
       ctx.font = "20px Arial";
-      ctx.fillText("X", ((highestXBound - lowestXBound)/this.props.scale) * gridSize-20,xAxis-5);
+      ctx.fillText("X", ((highestXBound - lowestXBound)/this.props.xScale) * gridSize-20,xAxis-5);
 
-      let xLabel = lowestXBound + this.props.scale;
-      for (let i = 1; i < ((highestXBound - lowestXBound)/this.props.scale); i++) {
+      let xLabel = lowestXBound + this.props.xScale;
+      for (let i = 1; i < ((highestXBound - lowestXBound)/this.props.xScale); i++) {
         if (xLabel === 0) {
-          xLabel += this.props.scale;
+          xLabel += this.props.xScale;
           continue;
         }
         let label = xLabel.toString()
-        ctx.fillText(label, (gridSize*i)-3-(3*label.length), xAxis+20)
-        xLabel += this.props.scale;
+        let labelx = label.length <=3 ? (gridSize*i)-3-(3*label.length) : (gridSize*i)-3-(5*label.length)
+        ctx.fillText(label, labelx, xAxis+20)
+        xLabel += this.props.xScale;
       }
     }
 
