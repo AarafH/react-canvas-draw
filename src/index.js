@@ -731,7 +731,7 @@ export default class CanvasDraw extends PureComponent {
     // Labels y axis
     if ((lowestXBound < 0) && (highestXBound > 0)) {
       ctx.font = "20px Arial";
-      ctx.fillText("Y",yAxis+5,20);
+      ctx.fillText("y",yAxis+5,20);
 
       let yLabel = highestYBound - this.props.yScale;
       for (let i = 1; i < ((highestYBound - lowestYBound)/this.props.yScale); i++) {
@@ -749,7 +749,7 @@ export default class CanvasDraw extends PureComponent {
     // Labels x axis
     if ((lowestYBound < 0) && (highestYBound > 0)) {
       ctx.font = "20px Arial";
-      ctx.fillText("X", ((highestXBound - lowestXBound)/this.props.xScale) * gridSize-20,xAxis-5);
+      ctx.fillText("x", ((highestXBound - lowestXBound)/this.props.xScale) * gridSize-20,xAxis-5);
 
       let xLabel = lowestXBound + this.props.xScale;
       for (let i = 1; i < ((highestXBound - lowestXBound)/this.props.xScale); i++) {
