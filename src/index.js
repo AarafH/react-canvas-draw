@@ -133,6 +133,15 @@ export default class CanvasDraw extends PureComponent {
 		const yCoord = oY - (this.props.gridSize * y) / this.props.yScale;
 		this.ctx.grid.fillRect(xCoord - 3, yCoord - 3, 7, 7);
   };
+	
+  placePoints = (listPoints) => {
+    this.drawGrid(this.ctx.grid);
+    this.simulateDrawingLines({ this.lines, immediate: true });
+    for (point in listPoints) {
+	this.placePoint(point[0], point[1]);
+    } 
+    this.triggerOnChange();
+  }
 
   undo = () => {
     let lines = [];
