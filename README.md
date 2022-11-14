@@ -86,7 +86,7 @@ Useful functions that you can call, e.g. when having a reference to this compone
 
 This repo was kickstarted by nwb's awesome [react-component starter](https://github.com/insin/nwb/blob/master/docs/guides/ReactComponents.md#developing-react-components-and-libraries-with-nwb).
 
-You just need to clone it, yarn it & start it!
+You just need to clone it, yarn it & start it!!
 
 ## Tips
 
