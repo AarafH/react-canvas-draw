@@ -119,6 +119,21 @@ export default class CanvasDraw extends PureComponent {
     this.coordSystem.attachViewChangeListener(this.applyView.bind(this));
   }
 
+  placePoint = (x, y) => {
+    const lowestXBound = this.props.lowestX - this.props.xScale;
+    const highestXBound = this.props.highestX + this.props.xScale;
+    const lowestYBound = this.props.lowestY - this.props.yScale;
+    const highestYBound = this.props.highestY + this.props.yScale;
+		if (x <= lowestXBound || x >= highestXBound || y <= lowestYBound || y >= highestYBound) {
+			return;
+		}
+    const oX = (-lowestXBound / this.props.xScale) * this.props.gridSize; 
+    const oY = (highestYBound / this.props.yScale) * this.props.gridSize; 
+		const xCoord = oX + (this.props.gridSize * x) / this.props.xScale;
+		const yCoord = oY - (this.props.gridSize * y) / this.props.yScale;
+		this.ctx.grid.fillRect(xCoord - 3, yCoord - 3, 7, 7);
+  };
+
   undo = () => {
     let lines = [];
     if (this.lines.length) {
