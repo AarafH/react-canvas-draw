@@ -142,7 +142,7 @@ export default class CanvasDraw extends PureComponent {
 	this.placePoint(point[0], point[1]);
     } 
     this.triggerOnChange();
-  }
+  };
 
   undo = () => {
     let lines = [];
