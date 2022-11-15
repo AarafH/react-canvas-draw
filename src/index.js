@@ -760,7 +760,7 @@ export default class CanvasDraw extends PureComponent {
 
       let yLabel = highestYBound - this.props.yScale;
       for (let i = 1; i < ((highestYBound - lowestYBound)/this.props.yScale); i++) {
-        if (yLabel.toFixed(2) === "0.00") {
+        if (yLabel.toFixed(2) === "0.00" || xLabel.toFixed(2) == "-0.00") {
           yLabel -= this.props.yScale;
           continue;
         }
@@ -778,7 +778,7 @@ export default class CanvasDraw extends PureComponent {
 
       let xLabel = lowestXBound + this.props.xScale;
       for (let i = 1; i < ((highestXBound - lowestXBound)/this.props.xScale); i++) {
-        if (xLabel.toFixed(2) === "0.00") {
+        if (xLabel.toFixed(2) === "0.00" || xLabel.toFixed(2) === "-0.00") {
           xLabel += this.props.xScale;
           continue;
         }
