@@ -760,11 +760,11 @@ export default class CanvasDraw extends PureComponent {
 
       let yLabel = highestYBound - this.props.yScale;
       for (let i = 1; i < ((highestYBound - lowestYBound)/this.props.yScale); i++) {
-        if (yLabel === 0) {
+        if (yLabel.toFixed(2) === "0.00") {
           yLabel -= this.props.yScale;
           continue;
         }
-        let label = yLabel.toFixed(2);
+        let label = yLabel.toFixed(2).replace(/\.?0*$/,'');
         let labely = label.length <=3 ? yAxis-15-(7*(label.length)) : yAxis-15-(7*(label.length))
         ctx.fillText(label, labely, (gridSize*i)+6)
         yLabel -= this.props.yScale
@@ -778,11 +778,11 @@ export default class CanvasDraw extends PureComponent {
 
       let xLabel = lowestXBound + this.props.xScale;
       for (let i = 1; i < ((highestXBound - lowestXBound)/this.props.xScale); i++) {
-        if (xLabel === 0) {
+        if (xLabel.toFixed(2) === "0.00") {
           xLabel += this.props.xScale;
           continue;
         }
-        let label = xLabel.toFixed(2);
+        let label = xLabel.toFixed(2).replace(/\.?0*$/,'');
         let labelx = label.length <=3 ? (gridSize*i)-3-(3*label.length) : (gridSize*i)-3-(5*label.length)
         ctx.fillText(label, labelx, xAxis+20)
         xLabel += this.props.xScale;
