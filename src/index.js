@@ -23,7 +23,7 @@ const canvasStyle = {
 };
 
 // The order of these is important: grid > drawing > temp > interface
-const canvasTypes = ["grid", "drawing", "temp", "interface"];
+const canvasTypes = ["grid", "drawing", "temp", "studentPoints", "interface"];
 
 const dimensionsPropTypes = PropTypes.oneOfType([
   PropTypes.number,
@@ -131,19 +131,14 @@ export default class CanvasDraw extends PureComponent {
     const oY = (highestYBound / this.props.yScale) * this.props.gridSize; 
 		const xCoord = oX + (this.props.gridSize * x) / this.props.xScale;
 		const yCoord = oY - (this.props.gridSize * y) / this.props.yScale;
-		this.ctx.grid.fillRect(xCoord - 3, yCoord - 3, 7, 7);
+		this.ctx.studentPoints.fillRect(xCoord - 3, yCoord - 3, 7, 7);
   };
 	
   placePoints = (listPoints) => {
-    let lines = [...this.lines];
-		lines.forEach((line) => {
-			console.log(line);
-		});
-    this.drawGrid(this.ctx.grid);
+		this.clearWindow(this.ctx.studentPoints);
     listPoints.forEach((point) => {
     	this.placePoint(point[0], point[1]);
     });
-    this.simulateDrawingLines({ lines, immediate: true });
     this.triggerOnChange();
   };
 
@@ -482,6 +477,7 @@ export default class CanvasDraw extends PureComponent {
         this.setCanvasSize(this.canvas.drawing, width, height);
         this.setCanvasSize(this.canvas.temp, width, height);
         this.setCanvasSize(this.canvas.grid, width, height);
+        this.setCanvasSize(this.canvas.studentPoints, width, height);
 
         this.coordSystem.documentSize = { width, height };
         this.drawGrid(this.ctx.grid);

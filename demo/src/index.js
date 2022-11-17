@@ -149,18 +149,21 @@ class Demo extends Component {
           </button>
           <button
             onClick={() => {
-              this.saveableCanvas.undo();
+							let list = [];
+							list.push([1,1]);
+							list.push([2,2]);
+							list.push([3,3]);
+              this.saveableCanvas.placePointsTemp(list);
             }}
           >
-            Undo
+            Place list of points
           </button>
           <button
             onClick={() => {
-              console.log(this.saveableCanvas.getDataURL());
-              alert("DataURL written to console")
+							this.saveableCanvas.placePointTemp(2,1);
             }}
           >
-            GetDataURL
+            Place 2,1 
           </button>
           <div>
             <label>Width:</label>
