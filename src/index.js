@@ -135,7 +135,10 @@ export default class CanvasDraw extends PureComponent {
   };
 	
   placePoints = (listPoints) => {
-    let lines = this.lines;
+    let lines = [...this.lines];
+		lines.forEach((line) => {
+			console.log(line);
+		});
     this.drawGrid(this.ctx.grid);
     listPoints.forEach((point) => {
     	this.placePoint(point[0], point[1]);
