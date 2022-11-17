@@ -137,10 +137,10 @@ export default class CanvasDraw extends PureComponent {
   placePoints = (listPoints) => {
     let lines = this.lines;
     this.drawGrid(this.ctx.grid);
-    this.simulateDrawingLines({ lines, immediate: true });
     listPoints.forEach((point) => {
     	this.placePoint(point[0], point[1]);
     });
+    this.simulateDrawingLines({ lines, immediate: true });
     this.triggerOnChange();
   };
 
